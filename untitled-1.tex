@@ -1,0 +1,291 @@
+\documentclass[a4paper,11pt]{scrartcl} 
+%\usepackage[warn]{mathtext}
+\usepackage[T2A]{fontenc}
+%\usepackage[koi8-r]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{indentfirst}%first paragraph indent
+\usepackage{cmap}
+\usepackage[unicode=true]{hyperref}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{srcltx}
+\usepackage{textcomp}
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{afterpage}
+\usepackage{ccaption}
+\captiondelim{. }
+\usepackage{xspace}
+%научные символы и смайлики \smiley \frownie
+\usepackage{wasysym}
+\usepackage[noae]{Sweave}
+\usepackage{underscore}
+%переопределение примечания для KOMA-script
+%   [отступ до метки]{отступ}{отступ абзаца}
+\deffootnote[2.5em]{1.5em}{1em}{\textsuperscript{\thefootnotemark}}
+\setkomafont{sectioning}{\bfseries}
+\setkomafont{descriptionlabel}{\bfseries}
+
+
+%backslash
+\newcommand{\bs}{\symbol{'134}}
+%degree
+\newcommand{\grad}{\ensuremath{{}^{\circ}}\xspace}
+%R-акроним
+\newcommand{\R}{{\sffamily\bfseries R}\xspace}
+
+\title{Типы данных в \R \\ и принципы работы с ними}
+\author{\textcopyright{} А.Б.\,Шипунов\thanks{e-mail: dactylorhiza@gmail.com},
+     Е.М.\,Балдин\thanks{e-mail: E.M.Baldin@inp.nsk.su}}
+
+\begin{document}
+\maketitle
+
+%\tableofcontents
+
+
+\section{Числовые векторы}
+\label{sec:vectors}
+
+Простейший вектор (рост сотрудников):
+<<echo=TRUE,print=TRUE>>=
+x <- c(174, 162, 188, 192, 165, 168, 172)
+@
+
+Структура вектора:
+<<echo=TRUE,print=TRUE>>=
+str(x)
+@ 
+
+Проверка: <<А вектор ли это?>>:
+<<echo=TRUE,print=TRUE>>=
+is.vector(x)
+@ 
+ 
+\section{Факторы}
+\label{sec:factors}
+
+Текстовый (character) вектор (пол сотрудников):
+<<echo=TRUE,print=TRUE>>=
+sex <- c("male", "female", "male", "male", "female", "male", "male")
+is.character(sex)
+is.vector(sex)
+str(sex)
+@ 
+
+Содержимое текстового вектора:
+<<echo=TRUE,print=TRUE>>=
+sex
+sex[1]
+table(sex)
+@ 
+
+Задаём фактор:
+<<echo=TRUE,print=TRUE>>=
+sex.f <- factor(sex)
+sex.f
+@ 
+
+График:
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+plot(sex.f)
+@ 
+
+Что такое фактор:
+<<echo=TRUE,print=TRUE>>=
+is.factor(sex.f)
+is.character(sex.f)
+str(sex.f)
+@ 
+
+Доступ к данным:
+<<echo=TRUE,print=TRUE>>=
+sex.f[5:6]
+sex.f[6:7]
+sex.f[6:7, drop=TRUE]
+factor(as.character(sex.f[6:7]))
+@ 
+
+Приведение к цифровому виду:
+<<echo=TRUE,print=TRUE>>=
+as.numeric(sex.f)
+@ 
+
+Ещё один вектор (вес сотрудников):
+<<echo=TRUE,print=TRUE>>=
+w <- c(69, 68, 93, 87, 59, 82, 72)
+@ 
+
+Построение графика:
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+plot(x, w, pch=as.numeric(sex.f), col=as.numeric(sex.f))
+legend("topleft", pch=1:2, col=1:2, legend=levels(sex.f))
+@ 
+
+Ещё один текстовый вектор (размер маек сотрудников):
+<<echo=TRUE,print=TRUE>>=
+m <- c("L", "S", "XL", "XXL", "S", "M", "L")
+m.f <- factor(m)
+m.f
+@ 
+
+Упорядочиваем текстовые данные:
+<<echo=TRUE,print=TRUE>>=
+m.o <- ordered(m.f, levels=c("S", "M", "L", "XL", "XXL"))
+m.o
+@ 
+
+\section{Пропущенные данные}
+\label{sec:nodata}
+
+
+Вектор данных с пропущенными значениями (время на сон) :
+<<echo=TRUE,print=TRUE>>=
+h <- c(8, 10, NA, NA, 8, NA, 8)
+h
+@ 
+
+Вычисление среднего если есть пропущенные данные:
+<<echo=TRUE,print=TRUE>>=
+mean(h)
+mean(h, na.rm=TRUE)
+mean(na.omit(h))
+@ 
+
+Замена пропущенных данных на среднее по выборке:
+
+<<echo=TRUE,print=TRUE>>=
+h[is.na(h)] <- mean(h, na.rm=TRUE)
+h
+@ 
+
+
+\section{Матрицы}
+\label{sec:matrix}
+
+Матрицы \(2\times2\):
+<<echo=TRUE,print=TRUE>>=
+m <- 1:4
+m
+ma <- matrix(m, ncol=2, byrow=TRUE)
+ma
+str(ma)
+str(m)
+mb <- m
+mb
+attr(mb, "dim") <- c(2,2)
+mb
+@ 
+Матрица \(2\times2\times2\):
+<<echo=TRUE,print=TRUE>>=
+m3 <- 1:8
+dim(m3) <- c(2,2,2)
+m3
+@ 
+
+\section{Списки}
+\label{sec:lists}
+
+Обычный список:
+<<echo=TRUE,print=TRUE>>=
+l <- list("R", 1:3, TRUE, NA, list("r", 4))
+l
+@ 
+
+Способы доступа к данным:
+<<echo=TRUE,print=TRUE>>=
+h[3]
+ma[2, 1]
+l[1]
+str(l[1])
+l[[1]]
+str(l[[1]])
+@
+
+Именование списка:
+<<echo=TRUE,print=TRUE>>=
+names(l) <- c("first", "second", "third", "fourth", "fifth")
+str(l$first)
+@ 
+
+Именование векторов и матриц:
+<<echo=TRUE,print=TRUE>>=
+names(w) <- c("Коля", "Женя", "Петя", "Саша", "Катя", "Вася", "Жора")
+w
+w["Женя"]
+rownames(ma) <- c("a1","a2")
+colnames(ma) <- c("b1","b2")
+ma
+@ 
+
+\section{Таблицы данных}
+\label{sec:tables}
+
+
+Пример таблицы данных:
+<<echo=TRUE,print=TRUE>>=
+d <- data.frame(weight=w, height=x, size=m.o, sex=sex.f)
+d
+str(d)
+@ 
+
+Доступ к данным таблицы:
+<<echo=TRUE,print=TRUE>>=
+d$weight
+d[[1]]
+d[,1]
+d[,"weight"]
+@ 
+
+Выбор нужных колонок:
+<<echo=TRUE,print=TRUE>>=
+d[,2:4]
+d[,-1]
+@ 
+
+Выборка  данных по условию:
+<<echo=TRUE,print=TRUE>>=
+d$sex=="female"
+d[d$sex=="female",]
+@ 
+
+Сортировка выборки:
+<<echo=TRUE,print=TRUE>>=
+d[order(d$sex, d$height), ]
+@ 
+
+
+\section{Векторизованные вычисления}
+\label{sec:vectorcount}
+
+Простые операции над векторами:
+<<echo=TRUE,print=TRUE>>=
+w*1000
+@ 
+
+Циклы:
+<<echo=TRUE,print=TRUE>>=
+for (i in seq_along(w)) {
+ w[i] <- w[i] * 1000
+}
+w
+@ 
+
+Операции с матрицами:
+<<echo=TRUE,print=TRUE>>=
+ma + mb
+1:8 + 1:2
+@ 
+
+Векторные операции:
+<<echo=TRUE,print=TRUE>>=
+apply(trees, 2, mean)
+sapply(d, as.numeric)
+by(d[,1:2], d$sex, mean)
+lapply(d, is.factor)
+@ 
+
+
+\end{document}

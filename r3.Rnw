@@ -1,0 +1,1142 @@
+\documentclass[a4paper,11pt]{scrartcl} 
+%\usepackage[warn]{mathtext}
+\usepackage[T2A]{fontenc}
+%\usepackage[koi8-r]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}%first paragraph indent
+\usepackage{cmap}
+\usepackage[unicode=true]{hyperref}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{srcltx}
+\usepackage{textcomp}
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{afterpage}
+\usepackage{ccaption}
+\captiondelim{. }
+\usepackage{xspace}
+\usepackage{wasysym}
+\usepackage[noae]{Sweave}
+\usepackage{underscore}
+
+\deffootnote[2.5em]{1.5em}{1em}{\textsuperscript{\thefootnotemark}}
+\setkomafont{sectioning}{\bfseries}
+\setkomafont{descriptionlabel}{\bfseries}
+
+
+%backslash
+\newcommand{\bs}{\symbol{'134}}
+%degree
+\newcommand{\grad}{\ensuremath{{}^{\circ}}\xspace}
+\newcommand{\R}{{\sffamily\bfseries R}\xspace}
+
+\title{\R \\ and how to work with them}
+
+\date{ November 2011}
+\begin{document}
+\maketitle
+
+\tableofcontents
+\bigskip
+
+\section{Introdution}
+\label{sec:intro}
+
+
+
+When looking from point of view of statistic, the data can be divided into types based on how close they can be represented by the well-known metaphor of the number line. For example, a person's age can be easily presented in such a way, except that it can not be negative. Similar presentation of shoe size will be more difficult because numbers here usually have not intermediate values while any two different numbers have an intermediate one between them. On the other hand we can place those sizes in increasing or decreasing order but a person sex cannot be presented this way because we have only two values and an intermediate is out of sense. Sure, we can set female as one and male as zero (or two) but those numbers will not carry any numerical meaning and we will not be able even to sort them. There are also other special data types, for example angles, geographical coordinates and  etc. But all of them can be presented as numerical data. Thus the must principal difference between data types is possibility of their presentation using numbers. If this presentation is not possible the data in question are traditionally named as categorical. Statistical laws and subsequently statistical programs work with this data only of their type was declared beforehand. Remaining data types can be named differently: numerical, countable, sequenced or non-categorical. Let’s name them as numerical to be simple.
+
+\section{Numeric vectors}
+\label{sec:vectors}
+
+
+Suppose we have data on seven employees’ height in a small company. That's how you can create a simple vector using this data:
+
+<<echo=TRUE,print=TRUE>>=
+x <- c(174, 162, 188, 192, 165, 168, 172)
+@
+
+
+\(x\) is a name of object R,
+
+\(<-\) — the operator of assignment,
+
+\(c()\) — function of creation of a vector (from English «concatenate» to collect).
+
+Actually, R, and works mainly with objects and functions. An object can have its own structure:
+
+<<echo=TRUE,print=TRUE>>=
+str(x)
+@ 
+here x  is a numeric (num, numerical) vector. In programming languages, there are also scalars, but no scalars in R. Single objects are treated as vectors consisting of a single element.
+That's how you can check whether the vector is before us:
+
+
+<<echo=TRUE,print=TRUE>>=
+is.vector(x)
+@ 
+
+
+%Some rules which should be remembered:
+
+%1) Use for variables names only Latin letters, figures and a point (names of objects shouldn't begin with a point or figure);
+
+%2)Remember that R it is sensitive to the register, X and x are different names;
+
+%3) not to give to objects the names already occupied with widespread functions
+%(Type c ()), and also keywords (especially T, F, NA, NaN, Inf).
+%The operator is very useful to creation of "artificial" vectors «:», and also
+%Functions seq () and rep ().
+
+
+Generally speaking, R has many functions like is.smth() for a similar verification, and there are also functions like as.smth(), which will be used hereinafter. One can call objects in principle anyhow, but better follow some simple rules:
+
+1) Use for the names of Latin letters, digits and a point (object names should not begin with a dot or a digit);
+
+2) Remember that R is case-sensitive, X, and x are different names;
+
+3) Do not give the names of objects, already occupied by the common functions (such as c()), as well as key words (especially T, F, NA, NaN, Inf).
+
+To create artificial vectors “:”is a very useful operator, and also functions seq() and rep().
+
+\newpage
+\section{Factors}
+\label{sec:factors}
+%For a designation of the categorial data in R there are some ways. First, it is possible to create text (character) a vector:
+To refer to categorical data R has several ways of different grades of “correctness”. First, you can create a text (character) vector:
+
+%Text (character) a vector (a sex of employees)::
+
+<<echo=TRUE,print=TRUE>>=
+sex <- c("male", "female", "male", "male", "female", "male", "male")
+is.character(sex)
+is.vector(sex)
+str(sex)
+@ 
+Let us assume that sex is the description of sex workers in a small organization. 
+That's how R displays this vector content:
+<<echo=TRUE,print=TRUE>>=
+sex
+@
+By the way, it's time to uncover the mystery of the number in the square brackets. It is simply number of element in the vector. Here's the way how to use it (Yes, yes, the square brackets is also a command. You can check this by typing Help? "[".):
+<<echo=TRUE,print=TRUE>>=
+sex[1]
+@
+
+
+%Smart and object-focused of command and functions R something understand about object «sex», for example, a command table ():
+“Smart”, or object-oriented commands in R understand something about the object “sex”, for example, the command table():
+
+<<echo=TRUE,print=TRUE>>=
+sex
+sex[1]
+table(sex)
+@ 
+
+But the command plot(), sorry, cannot do anything good with the vector like this. In it is, in general, correct, because the program does not know anything about the properties of a human sex. In such cases, the user must inform R, that it should be treated as categorical data type. 
+Do it this way:
+
+%And  the command plot (), isn't able anything good to make with such vector. And it, in general, correctly because the program knows nothing about properties of a sex of person. In such cases the user himself should inform R that it should be considered as categorial type of the data. It becomes so:
+
+<<echo=TRUE,print=TRUE>>=
+sex.f <- factor(sex)
+sex.f
+@ 
+And now the command plot () already understands that it should do:
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+plot(sex.f)
+@ 
+Because we face a special type of object intended for categorical data - a factor with two levels (levels):
+
+<<echo=TRUE,print=TRUE>>=
+is.factor(sex.f)
+is.character(sex.f)
+str(sex.f)
+@ 
+Factor w / 2 levels "female", "male": 2 1 2 2 1 2 2
+
+Very many of the functions in R (for example, the same plot()) prefer factors instead of text vectors. Additionally some are able to convert text into vector factors, and some are not, therefore, one has to be careful.
+There are several other important properties of the factors that one needs to know in advance. First, a subset of factors is a factor with the same number of levels, even if they are not left in the subset:
+
+<<echo=TRUE,print=TRUE>>=
+sex.f[5:6]
+sex.f[6:7]
+@
+
+One can get rid of an excess level only applying a special argument or by performing data conversion “to and back”:
+<<echo=TRUE,print=TRUE>>=
+sex.f[6:7, drop=TRUE]
+factor(as.character(sex.f[6:7]))
+@ 
+The factors as opposed to text vectors can be easily converted into the numerical values:
+<<echo=TRUE,print=TRUE>>=
+as.numeric(sex.f)
+@ 
+
+To understand why one have do it becomes clear if we consider here is an example: Suppose besides a height, we also have data on employees weight and we want to draw graph in which at the same time height, weight and gender will be displayed. Here is how to do that:
+
+<<echo=TRUE,print=TRUE>>=
+w <- c(69, 68, 93, 87, 59, 82, 72)
+@
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+plot(x, w, pch=as.numeric(sex.f), col=as.numeric(sex.f))
+legend("topleft", pch=1:2, col=1:2, legend=levels(sex.f))
+@ 
+
+Here, of course, some explanations are needed: pch and col are parameters which were assigned respectively to determine the icon types and their colors on the graph. Thus, depending on which sex this point belongs to, it will be displayed as a circle or a triangle, and black or red color respectively. It is required, of course, that all three vectors correspond each other. Yet it must be noted that the display of sex, using icon and color together is excessive, for a “normal” graph one method is enough.
+
+Third, the factors can be sorted to convert them into some numerical data similarity. Let’s insert a fourth variable: T-shirts size for the same hypothetical eight employees:
+
+<<echo=TRUE,print=TRUE>>=
+m <- c("L", "S", "XL", "XXL", "S", "M", "L")
+m.f <- factor(m)
+m.f
+@ 
+
+As you can see, the levels are sorted in alphabetical order but we need to "S" (small) to come first. Furthermore, we must somehow inform R that we have not simple categorical data but orderable categorical data. One should do that as follows:
+<<echo=TRUE,print=TRUE>>=
+m.o <- ordered(m.f, levels=c("S", "M", "L", "XL", "XXL"))
+m.o
+@ 
+
+\section{Missing data}
+\label{sec:missdata}
+
+In addition to the vectors of numbers and text vectors, R supports also logical vectors, as well as special data types that can be very important for statistical calculations. First of all, it's skipped or missing data, which are denoted as NA. Such data are often arising in the real field and laboratory studies, surveys, polls, tests etc. It should be aware that the presence of missing data does not mean that the data are generally of poor quality. On the other hand, statistical programs must somehow work with that data also. Let us consider the following example: suppose that we have the result of a survey of the same seven employees. They were asked how many hours they averagely sleep but one of the respondents refused to answer, another said “I do not know” and the third one was out of the office at the moment of in the survey. Than was how missing data were aroused:
+<<echo=TRUE,print=TRUE>>=
+h <- c(8, 10, NA, NA, 8, NA, 8)
+h
+@ 
+
+This example shows that NA should be entered without quotation marks, and R is not in the least embarrassed that among the numbers some kind of text arrives. Note that the missing data are often as diverse as in our example. However, they are coded in the same way, and this must not be forgotten. Now, about how to work with the obtained vector h. If we just try to calculate the mean value (function mean()), we obtain:
+<<echo=TRUE,print=TRUE>>=
+mean(h)
+@
+And it is “ideologically correct” because the function may differently process NA, and by default, it simply indicates that something is wrong with the data. To calculate the average of “not missed” part of the vector one can use one of two ways:
+<<echo=TRUE,print=TRUE>>=
+
+mean(h, na.rm=TRUE)
+mean(na.omit(h))
+@ 
+
+Which way is better depends on the situation. One problem more often arrives: how to make a substitution of missing data, for example, replace all NA with the average for the sample. A common solution is like the following:
+
+<<echo=TRUE,print=TRUE>>=
+h[is.na(h)] <- mean(h, na.rm=TRUE)
+h
+@ 
+On the left side of the first expression indexing is on the run, it is selection of values in h to replace missing numbers (is.na ()). After the expression execution "old" values disappear forever.
+
+\section{Matrixes}
+\label{sec:matrix}
+
+A matrix is extremely widespread form of data representation presented in a form of table. Concerning matrixes R one must generally know two important things: first, that they may be of different dimensions, and secondly, that there are really no matrixes R.
+Let's start with the last. Matrix in R is simply a special type of vector which possesses some additional properties (“attributes”), allowing to interpret it as a set of rows and columns. Suppose we want to create a simple \(2\times2\). To start with let’s create it from a numerical vector:
+<<echo=TRUE,print=TRUE>>=
+m <- 1:4
+m
+ma <- matrix(m, ncol=2, byrow=TRUE)
+ma
+str(ma)
+str(m)
+@
+
+This example shows that the structure of the object m and ma are not too different. The only difference is in their screen display. Even more obvious unity between vectors and matrices can be traced if you create a matrix in a different way:
+<<echo=TRUE,print=TRUE>>=
+mb <- m
+mb
+attr(mb, "dim") <- c(2,2)
+mb
+@ 
+It looks like a trick. However, everything is simple: we assign a vector mb an attribute dim (from the word dimension) and set the value of this attribute in c(2,2), there are two rows and two columns. A reader is expected to guess why mb matrix is different from ma one (the answer at end of the article). 
+We showed only two ways to create matrices, but in reality there are much more. It is very popular, for example, to make the matrices of vector-columns or rows using commands cbind() and rbind (). If the result must be turned in 90 degrees, use the command t().
+The most common are matrices with two dimensions but nobody prevents to make a multi-dimensional matrix:
+ \(2\times2\times2\):
+<<echo=TRUE,print=TRUE>>=
+m3 <- 1:8
+dim(m3) <- c(2,2,2)
+m3
+@ 
+m3 is a three-dimensional matrix. Naturally one is not able to show it as a table, therefore R displays it on the screen as a series of tables. Similarly one can create also four-dimensional matrix (like built-in Titanic data from the previous article). Multi-dimensional matrices in R are called arrays.
+
+\section{Lists}
+\label{sec:lists}
+
+Lists are another very important type of data representation. Their creation, especially at first, probably will not be necessary, but one needs to know their characters. It is needed mainly because very many functions in R return the very lists. At the very beginning of acquaintance let’s create a list just for a practice:
+
+<<echo=TRUE,print=TRUE>>=
+l <- list("R", 1:3, TRUE, NA, list("r", 4))
+l
+@ 
+
+We see that the list some kind of assortment. A vector and, accordingly, a matrix may consist only of elements of the same type, but a list can consist of anything. In particular, as one can see from the example, a list may include other lists. Now let's talk about indexing or selecting list items. Elements of the vector are selected by means of the square brackets function:
+
+<<echo=TRUE,print=TRUE>>=
+l[3]
+@
+The matrix elements can be chosen the same way, only several arguments are in use (for two-dimensional matrix it is the row number and the column number, in this order):
+<<echo=TRUE,print=TRUE>>=
+ma[2, 1]
+@
+But the list items are selected by three different methods. First, you can use square brackets:
+<<echo=TRUE,print=TRUE>>=
+l[1]
+str(l[1])
+@
+It is very important here that the resulting object will be also list. Secondly double square brackets can be used:
+<<echo=TRUE,print=TRUE>>=  
+l[[1]]
+str(l[[1]])
+@
+
+In this case, the resulting object will be of the same type as it would be before to the unification to the list (and therefore the first object is a text vector and a fifth is a list). Third, you can use the list names. But t first you must assign them:
+<<echo=TRUE,print=TRUE>>=
+names(l) <- c("first", "second", "third", "fourth", "fifth")
+str(l$first)
+@ 
+
+To select by a name the dollar sign is used, and the resulting object will be the same as using double square brackets. In fact, the names in R can have vector elements and matrix rows and columns:
+
+<<echo=TRUE,print=TRUE>>=
+names(w) <- c("Nic", "John", "Piter", "Alex", "Cat", "Bob", "Gorge")
+w
+w["John"]
+rownames(ma) <- c("a1","a2")
+colnames(ma) <- c("b1","b2")
+ma
+@ 
+
+\section{Data Tables}
+\label{sec:tables}
+
+Finally we came to the most important type of data - data tables (data frames). Those very data tables are the most similar to Excel spreadsheets and their analogues, and therefore are in the most often use. It is especially true for R beginners. Data tables are hybrid type of same length vectors representation, a one-dimensional list of vectors of the same length. Thus, each data table is a list of columns and within the same column, all data must be of one type. We illustrate this by an example concerning vectors created in this article before:
+
+<<echo=TRUE,print=TRUE>>=
+d <- data.frame(weight=w, height=x, size=m.o, sex=sex.f)
+d
+str(d)
+@ 
+
+
+
+Because the data table is a list, list indexing methods are applicable to it. Furthermore, data tables can be indexed as a two-dimensional matrix. Here are some examples:
+
+<<echo=TRUE,print=TRUE>>=
+d$weight
+d[[1]]
+d[,1]
+d[,"weight"]
+@ 
+
+It is often necessary to select a few specific columns. This can be done but in different ways (exclude the column weight):
+<<echo=TRUE,print=TRUE>>=
+d[,2:4]
+d[,-1]
+@ 
+
+The second method (negative indexing) in some cases is practically unreplacable. Indexing is directly connected to one more R data type – logical vectors. For example, how can we select from our table the data related to women only? Here's one way:
+<<echo=TRUE,print=TRUE>>=
+d$sex=="female"
+d[d$sex=="female",]
+@ 
+
+Thus, after the selection “processing”, the data in the table contains only those rows that correspond to "TRUE, so the lines 2 and 5.
+A more complex selection case is the data tables sorting. To sort a vector it is sufficient to apply the command sort(), but if necessary, for example, to sort our data is first on sex, and then on the height, we have to user a more difficult operation:
+
+<<echo=TRUE,print=TRUE>>=
+d[order(d$sex, d$height), ]
+@ 
+
+From all ways data exchange from Excel with R through clipboard may be the most attractive. If to open in OpenOffice Calc a xls-file it is possible to copy any quantity of cells in the buffer, and then for  putting  them in R you may  use next command:\\
+t<-read.table("clipboard");\\
+Another way, is read from file\\
+t<-read.table("<name_file.txt>",sep=';')\\
+
+
+
+
+\section{Vectorized computation}
+\label{sec:vectorcount}
+
+Despite the fact that R is similar to many modern script programming languages, such as Perl and Python, it has many peculiar features. One of the interesting and very useful features of the R this so called vectorized computations. Their use is very simple. Suppose we want to transfer weight from pounds to grams:
+
+<<echo=TRUE,print=TRUE>>=
+w*1000
+@ 
+
+For such an operation it is often required to use looping constructs (loops) but here we use one operation only. Of course loops also will work in \R:
+<<echo=TRUE,print=TRUE>>=
+for(i in seq_along(w)) {
+ w[i] <- w[i] * 1000
+}
+w
+@ 
+
+
+But this is too cumbersome. Operation on vectors and matrices are also vectorised:
+<<echo=TRUE,print=TRUE>>=
+ma + mb
+1:8 + 1:2
+@ 
+
+\section{If}
+\label{sec:If}
+The if/else statement conditionally evaluates two statements. There is a condition which is evaluated and if the value is TRUE then the first statement is evaluated; otherwise the second statement will be evaluated. The if/else statement returns, as its value, the value of the statement that was selected. The formal syntax is
+
+     if ( statement1 ) {
+         command1
+         command2
+         
+         }
+     else
+        {
+        command3
+        command4
+        }      
+        
+
+
+If/else statements can be nested.
+
+     if ( statement1 )
+         statement2
+     else if ( statement3 )
+         statement4
+     else if ( statement5 )
+         statement6
+     else
+         statement8
+One of the even numbered statements will be evaluated and the resulting value returned. If the optional else clause is omitted and all the odd numbered statement's evaluate to FALSE no statement will be evaluated and NULL is returned.
+
+The odd numbered statements are evaluated, in order, until one evaluates to TRUE and then the associated even numbered statement is evaluated. In this example, statement6 will only be evaluated if statement1 is FALSE and statement3 is FALSE and statement5 is TRUE. There is no limit to the number of else if clauses that are permitted.
+
+\section{For}
+\label{sec:For}
+The syntax of the for loop is
+
+     for ( name in vector )
+        
+        statement1
+        
+        
+where vector can be either a vector or a list. For each element in vector the variable name is set to the value of that element and statement1 is evaluated. A side effect is that the variable name still exists after the loop has concluded and it has the value of the last element of vector that the loop was evaluated for.
+
+\section{While}
+\label{sec:While}
+The while statement is very similar to the repeat statement. The syntax of the while loop is
+
+     while ( statement1 ) statement2
+     
+where statement1 is evaluated and if its value is TRUE then statement2 is evaluated. This process continues until statement1 evaluates to FALSE.
+
+
+\section{Example}
+\label{sec:Example}
+Now I want to show you  the  one program for example.
+This program take data from  central bank of Czech Republic  and create the matrix of correlation.
+
+I will show it program in RStudio.
+Now please  run Rstudio and  create program on  the   computers yourself.
+
+<<echo=FALSE,print=TRUE>>=
+rm(list = ls())
+options(timeout=120)
+y2011 <-read.table(url("http://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/rok.txt?rok=2011"),header = TRUE, sep = "|",dec = ",")
+
+
+
+
+matr <- function (table,rate) {
+  ccorel = 0
+  
+  i=0
+
+for (x in table) {
+  for (y in table) {
+    if(is.numeric(y)&&is.numeric(x)) {
+      i=i+1
+      ccorel[i] <- cor(x,y)
+      if((ccorel[i]> rate) & (ccorel[i]<0.999999))   {
+        cat (" ",i, " >",rate," ",ccorel[i]," ")
+        cat(names(y2011[(i-1)%/%34+2])," --->")
+        cat(names(y2011[i-34*i%/%34+1]),"| ")
+        cat((i-1)%/%34+2,"---",i-34*i%/%34+1,"  \n")
+             
+        } 
+      }
+    }
+  }
+return(ccorel)
+}
+
+
+
+cmatr = matrix(matr(table=y2011,rate=0.999),34)
+y = y2011$X1.EUR
+x = y2011$X1.BGN 
+# y = Inetercept + b*x
+exp1 = formula("y ~ x");
+out <- lm(exp1)
+out$coefficients
+a=out$coefficients[1]
+b=out$coefficients[2]
+t = out$coefficients[1] + y2011$X1.BGN[1]*out$coefficients[2]
+cat ("Predict ? ???->",t)
+sm1=subset(y2011, (grepl('[0-9].0[4-6].2011', y2011$Datum )))
+sm2=subset(y2011, (grepl('[0-9].[0][12].2011', y2011$Datum )))
+#print(sm1)
+#print(sm2)
+@
+
+
+
+
+\section{Linear and Integer Programming}
+\label{sec:lpsolve}
+\bigskip
+Let the following data is given:
+
+1. A certain firm can carry out projects of three types.
+2. Staff consists of 4 employees, each of which is necessary for work on everyone of the projects.
+
+Concrete data is set in  next tables:
+
+\bigskip
+\begin{tabular}{|l |c| c| c|}
+\hline
+& Type of Project 1 &  Type of Project 2 &  Type of Project 3 \\
+\hline
+Employees 1 &  2 & 4  & 5\\
+\hline
+Employees 2 & 1 & 8 & 6   \\
+\hline
+Employees 3 & 7 & 4 & 5  \\
+\hline
+Employees 4 & 4 & 6 & 8  \\
+\hline
+\end{tabular}
+
+\bigskip
+
+This table describe how long employees  work on each project.
+
+
+\bigskip
+\begin{tabular}{|l |c| }
+\hline
+ &  Profit from   type of project  \\
+\hline
+Project 1 &  1000\$  \\
+\hline
+Project 2 &  1400\$ \\
+\hline
+Project 3 &  1200\$  \\
+\hline
+\end{tabular}
+
+\bigskip
+
+This table describes how many there will be profits on sale of each project 
+\bigskip
+
+\begin{tabular}{|l |c| }
+\hline
+ & How many hours we have  \\
+\hline
+Emploiees 1 &  120 \\
+\hline
+Emploiees 2 & 280   \\
+\hline
+Emploiees 3 & 240  \\
+\hline
+Emploiees 4 & 360  \\
+\hline
+\end{tabular}
+
+\bigskip
+
+How many working hours in our disposal
+
+\bigskip
+
+Problem -> Plan of Sale?
+
+\bigskip
+
+
+\begin{tabular}{|l |c| c| c| c| }
+\hline
+& Type of Project 1 &  Type of Project 2 &  Type of Project 3&  \\
+\hline
+Employees 1 & \begin{math} 2*x_1 \end{math} & \begin{math}4*x_2  \end{math} & \begin{math} 5*x_3 \end{math} & \begin{math}  <=120 \end{math} \\
+\hline
+Employees 2 & \begin{math} 1*x_1 \end{math} & \begin{math} 8*x_2 \end{math} & \begin{math} 6*x_3 \end{math}& \begin{math} <=280 \end{math} \\
+\hline
+Employees 3 & \begin{math} 7*x_1 \end{math} & \begin{math} 4*x_2  \end{math}& \begin{math} 5*x_3 \end{math}& \begin{math} <=240 \end{math} \\
+\hline
+Employees 4 & \begin{math}4*x_1 \end{math}  & \begin{math} 6*x_2 \end{math} & \begin{math} 8*x_3 \end{math}& \begin{math} <=360 \end{math}  \\
+\hline
+
+
+
+\end{tabular}
+
+\bigskip
+\begin{math} F(x)  = 1000*x_1 +1400 *x_2 +1200*x_3 -> max  \end{math}\\
+\begin{math}x_1, \end{math} - count of project 1 type  \\  
+\begin{math}x_2, \end{math} - count of project 2 type  \\
+\begin{math}x_3, \end{math} - count of project 3 type  \\ 
+\\
+\begin{math} 2*x_1 + 4*x_2+5*x_3 <=120 \end{math}\\
+\begin{math} 1*x_1 + 8*x_2+6*x_3 <=120 \end{math}\\
+\begin{math} 7*x_1 + 4*x_2+5*x_3 <=120 \end{math}\\
+\begin{math} 4*x_1 + 6*x_2+8*x_3 <=120 \end{math}\\
+<<echo=TRUE,print=FALSE>>=
+
+
+library("lpSolve")
+@
+<<echo=TRUE,print=TRUE>>=
+f.obj <- c(1000, 1400, 1200)  # Maximaze   Profit of Sale
+f.con <- matrix (c(
+                  2, 4, 5,     # Cost empl 1 (hour) 
+                   1, 8, 6,    # Cost empl 2 (hour)
+                   7, 4, 5,    # Cost empl 3 (hour)
+                   4, 6, 7     # Cost empl 3 (hour)
+                   ), nrow=4, byrow=TRUE)
+f.dir <- c("<=", "<=","<=","<=")
+f.rhs <- c(120, 280,240,360)
+lp_var <-lp ("max", f.obj, f.con, f.dir, f.rhs)
+lp_var
+lp_var$solution
+
+@
+Project 1 ---> 24 units
+
+Project 2 ---> 18 units
+
+Project 3 ---> 0 units
+
+Our plan of sale  is ready.
+\bigskip
+
+Now we have plan of sale and whats about addvertisment company.
+After investigation  and research marketing  we  have   next data: 
+
+Coverage  of clients
+
+\begin{tabular}{|l |c|}
+\hline
+ TV &  60 \% \\
+\hline
+Radio  & 20 \% \\
+\hline
+Press  & 10 \% \\
+\hline
+Magazines  & 10 \% \\
+\hline
+
+\end{tabular}
+
+For TV our firm make two clips C1(old) and C2(new)
+
+\begin{tabular}{|l |c|}
+\hline
+Clips  & Like  \\
+
+\hline
+C1  & 25  \%\\
+\hline
+C2  & 35  \%\\
+\hline
+
+\end {tabular}
+\begin{equation} Important:   25+35 == 60 \end{equation}
+
+For Radio our firm make two clips R1(old) and R2(new)
+
+\begin{tabular}{|l |c|}
+\hline
+Clips  & Like  \\
+
+\hline
+R1  & 12  \%\\
+\hline
+R2  & 8  \%\\
+\hline
+
+\end {tabular}
+\begin{equation} Important:  12+8 == 20 \end{equation}
+
+For Press our firm make two articles PA1(old) and PA2(new)
+
+\begin{tabular}{|l |c|}
+\hline
+ Articles & Like  \\
+
+\hline
+PA1  & 4  \%\\
+\hline
+PA2  & 6  \%\\
+\hline
+
+\end {tabular}
+\begin{equation} Important:  4+6 == 10 \end{equation}
+
+For Journals our firm make two articles JA1(old) and JA2(new)
+
+\begin{tabular}{|l |c|}
+\hline
+ Articles & Like \\
+
+\hline
+JA1  & 4  \%\\
+\hline
+JA2  & 6  \%\\
+\hline
+
+\end {tabular}
+\begin{equation} Important:  4+6 == 10 \end{equation}
+
+\bigskip
+
+Was poll of experts on which basis is moved it is offered as expenses for the publication or a mention for each advertizing material should be distributed
+
+if to use  data of this poll we may receive  next   table
+
+\bigskip
+
+\begin{tabular}{|l|l |c| c| c| c| c| c| c| c|}
+\hline
+&      &  C1 & C2  &  PA1 & PA2 & JA1 & JA2 & R1 & R2\\
+\hline
+20&Radio &  5 & 5  &  5 & 5 & 5 & 5 & 35 & 35\\
+\hline
+10&Press &  5 & 5  &  28 & 22 &  15 & 15 & 5 & 5\\
+\hline
+60&TV &  25 & 25  &  5 & 5 & 5 & 5 & 15 & 15\\
+\hline
+10&Journals &  15 & 15  &  5 & 5 & 25 & 25 & 5 & 5\\
+\hline
+ & & 25 &  35 & 4  &  6 & 4 & 6 & 12 & 8 \\
+\hline
+\end{tabular}
+
+
+\bigskip
+
+
+In this case the decision is trivial and corresponds 
+to preferences of clients.
+We can check up it, having solved a corresponding transport problem
+
+
+\bigskip
+
+
+
+\begin{tabular}{|l |c| c| c| c| c| c| c| c|c|}
+\hline
+      &  C1 & C2  &  PA1 & PA2 & JA1 & JA2 & R1 & R2&\\
+\hline
+Radio &  \begin{math} 5* x_1{}_1 \end{math}  &  \begin{math} 5* x_1{}_2 \end{math}  & \begin{math} 5* x_1{}_3 \end{math}   & \begin{math} 5* x_1{}_4 \end{math}  &  \begin{math} 5* x_1{}_5 \end{math} &  \begin{math} 5* x_1{}_6 \end{math}  &   \begin{math} 35* x_1{}_7 \end{math} &   \begin{math} 35* x_1{}_8 \end{math}&<=20\\
+
+\hline
+ Press &  \begin{math} 5* x_2{}_1 \end{math}  &  \begin{math} 5* x_2{}_2 \end{math}  & \begin{math} 28* x_2{}_3 \end{math}   & \begin{math} 22* x_2{}_4 \end{math}  &  \begin{math} 15* x_2{}_5 \end{math} &  \begin{math} 15* x_2{}_6 \end{math}  &   \begin{math} 5* x_2{}_7 \end{math} &   \begin{math} 5* x_2{}_8 \end{math} & <=10\\
+
+
+
+
+
+\hline
+ TV &  \begin{math} 25* x_3{}_1 \end{math}  &  \begin{math} 25* x_3{}_2 \end{math}  & \begin{math} 5* x_3{}_3 \end{math}   & \begin{math} 5* x_3{}_4 \end{math}  &  \begin{math} 25* x_3{}_5 \end{math} &  \begin{math} 25* x_3{}_6 \end{math}  &   \begin{math} 5* x_3{}_7 \end{math} &   \begin{math} 5* x_3{}_8 \end{math} & <=60\\
+
+
+
+
+\hline
+ Journals &  \begin{math} 15* x_4{}_1 \end{math}  &  \begin{math} 15* x_4{}_2 \end{math}  & \begin{math} 5* x_4{}_3 \end{math}   & \begin{math} 5* x_4{}_4 \end{math}  &  \begin{math} 25* x_4{}_5 \end{math} &  \begin{math} 25* x_4{}_6 \end{math}  &   \begin{math} 5* x_4{}_7 \end{math} &   \begin{math} 5* x_4{}_8 \end{math} &<=10 \\
+
+\hline
+\hline
+
+ &  <=25 & <=35 & <=4  &  <=6 & <=4 & <=6 & <=12 & <=8 & \\
+\hline
+
+
+
+
+\end{tabular}
+
+\bigskip
+
+Now solve  
+
+<<echo=TRUE,print=TRUE>>=
+f.obj <- c( 5, 5, 5, 5, 5, 5,35,35,
+            5, 5,28,22,15,15, 5, 5,
+           25,25, 5, 5, 5, 5,15,15,
+           15,15, 5, 5,25,25, 5, 5)  # Maximaze  Effect
+f.con <- matrix (c(
+# 1 row
+1,1,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+# 2 row   \\
+0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+# 3 row
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0,
+#4 row
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,
+#col 1 
+1,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,
+#col 2 
+0,1,0,0,0,0,0,0,
+0,1,0,0,0,0,0,0,
+0,1,0,0,0,0,0,0,
+0,1,0,0,0,0,0,0,
+#col 3
+0,0,1,0,0,0,0,0,
+0,0,1,0,0,0,0,0,
+0,0,1,0,0,0,0,0,
+0,0,1,0,0,0,0,0,
+
+#col 4
+0,0,0,1,0,0,0,0,
+0,0,0,1,0,0,0,0,
+0,0,0,1,0,0,0,0,
+0,0,0,1,0,0,0,0,
+
+#col 5
+0,0,0,0,1,0,0,0,
+0,0,0,0,1,0,0,0,
+0,0,0,0,1,0,0,0,
+0,0,0,0,1,0,0,0,
+#col 6 
+0,0,0,0,0,1,0,0,
+0,0,0,0,0,1,0,0,
+0,0,0,0,0,1,0,0,
+0,0,0,0,0,1,0,0,
+
+#col 7
+0,0,0,0,0,0,1,0,
+0,0,0,0,0,0,1,0,
+0,0,0,0,0,0,1,0,
+0,0,0,0,0,0,1,0,
+
+#col 8
+0,0,0,0,0,0,0,1,
+0,0,0,0,0,0,0,1,
+0,0,0,0,0,0,0,1,
+0,0,0,0,0,0,0,1
+
+  ), nrow=12,byrow=TRUE)
+f.dir <- c("<=", "<=","<=","<=","<=","<=","<=","<=","<=","<=","<=","<=")
+f.rhs <- c(20, 10,60,10,25,35,4,6,4,6,12,8)
+des<-lp ("max", f.obj, f.con, f.dir, f.rhs)
+mm  <- matrix (des$solution, , nrow=4,byrow=TRUE)
+@
+ And, it has been told above.
+ 
+ How to be, in that case when the vector of preference of clients about advertizing products doesn't coincide with preferences about delivery systems to its clients.
+ For example we remove conditions 1,2,3,4 for each product.
+ It can occur when resources are estimated together, but not in pairs.
+ Therefore equality of the sum of all estimations 100 will be unique restriction.
+ Then if
+ 
+ 
+ 
+ %К примеру мы снимаем условия 1,2,3,4   для каждого продукта, это может произойти когда ресурсы оцениваются  вместе, а не попарно, поэтому   единственным условием будет не превышение суммы всех оценок 100.  Тогда, если:
+ 
+ \begin{tabular}{|l|l |c| c| c| c| c| c| c| c|}
+\hline
+&      &  C1 & C2  &  PA1 & PA2 & JA1 & JA2 & R1 & R2\\
+\hline
+20&Radio &  5 & 5  &  5 & 5 & 5 & 5 & 35 & 35\\
+\hline
+10&Press &  5 & 5  &  28 & 22 &  15 & 15 & 5 & 5\\
+\hline
+60&TV &  25 & 25  &  5 & 5 & 5 & 5 & 15 & 15\\
+\hline
+10&Journals &  15 & 15  &  5 & 5 & 25 & 25 & 5 & 5\\
+\hline
+& &  15 & 15  &  5 & 5 & 25 & 25 & 5 & 5\\
+\hline
+\end{tabular}
+
+We need  chande   only vector 
+f.rhs <- c(20, 10,60,10,15 , 15  ,  5 , 5 , 25 , 25 , 5 , 5)
+<<echo=TRUE,print=TRUE>>=
+f.rhs <- c(20, 10,60,10,15 , 15  ,  5 , 5 , 25 , 25 , 5 , 5)
+des<-lp ("max", f.obj, f.con, f.dir, f.rhs)
+mm  <- matrix (des$solution, , nrow=4,byrow=TRUE)
+@
+ \begin{tabular}{|l|l |c| c| c| c| c| c| c| c|}
+\hline
+&      &  C1 & C2  &  PA1 & PA2 & JA1 & JA2 & R1 & R2\\
+\hline
+20&Radio &  5 & 5  &  5 & 5 & 5 & 5 & 35 & 35\\
+\hline
+10&Press &  5 & 5  &  28 & 22 &  15 & 15 & 5 & 5\\
+\hline
+60&TV &  25 & 25  &  5 & 5 & 5 & 5 & 15 & 15\\
+\hline
+10&Journals &  15 & 15  &  5 & 5 & 25 & 25 & 5 & 5\\
+\hline
+& &  15 & 15  &  5 & 5 & 25 & 25 & 5 & 5\\
+\hline
+\end{tabular}
+
+This decision gives the chance to make elections on a template:
+
+Row 1 -Radio:
+It is necessary to use both radio clips and speek about JA2. 
+
+Row 2 -Press: 
+It is necessary to publish both articles
+
+Row 3 -TV In equal quantities to place both clips and also to offer a clip on the  cdrom together with magazines
+
+Row 4
+It is necessary to publish only the first article in magazine, and the second to discuss on radio.
+
+
+Col 1 and  2 
+It is necessary to show both clips on television
+Col  3  и 4
+Both articles it is necessary to publish
+
+
+\bigskip
+
+Now a conclusion on cells. In them the percent from a total sum of financing which can be spent for the publication of this resource in earch mass-media is specified. 
+That is, it is specified approximate  the plan of finance for an example the planned  The sum on the advertizing company is equal 10 000 \$,
+Then financing volumes turn out the following:
+
+ \begin{tabular}{|l|l |c| c| c| c| c| c| c| c|r|}
+\hline
+&      &  C1 & C2  &  PA1 & PA2 & JA1 & JA2 & R1 & R2 &2000 \$\\
+\hline
+20&Radio &  0 & 0  &  0 & 0 & 0 & 1000\$ & 500\$ & 500\$  & 1000 \$\\
+\hline
+10&Press &  0 & 0  &  500 \$ & 500 \$ &  0 & 0 & 0 & 0 &1000 \$ \\
+\hline
+60&TV &  1500 \$ & 1500 \$  &  0 & 0 & 1500 \$ & 1500 \$ & 0 & 0 &6000 \$\\
+\hline
+10&Journals &  0 & 0  &  0 & 0 & 1000 \$ & 0 & 0 & 0 & 1000 \$ \\
+\hline
+Total & &   1500 \$&  1500 \$  &  500 \$ & 500 \$  & 2500 \$  & 2500 \$ & 500 \$  & 500 \$ & \\
+\hline
+\end{tabular}
+
+
+\section{Theory Graphs}
+\label{sec:Graphs}
+
+The theory graph  is section  of the discrete mathematics, studying properties of graph. In a general sense the graph is represented as set of the verteices (dot) connected by edges. In strict definition by the count such pair of sets 
+\begin{math} G = (V, E) \end{math}  where V there is a subset of any count sets, and E — subset V×V is called.
+
+ Application of the various calculations made on such count, allows to find, for example, the shortest detour or the nearest grocery shop, to plan an optimum route.
+
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+library("igraph")
+actors <- data.frame(name=c("Alice", "Bob", "Cecil", "David",
+                            "Esmeralda"),
+                     age=c(48,33,45,34,21),
+                     gender=c("F","M","F","M","F"))
+relations <- data.frame(from=c("Bob", "Cecil", "Cecil", "David",
+                               "David", "Esmeralda"),
+                        to=c("Alice", "Bob", "Alice", "Alice", "Bob", "Alice"),
+                        same.dept=c(FALSE,FALSE,TRUE,FALSE,FALSE,TRUE),
+                        friendship=c(4,5,5,2,1,1), advice=c(4,5,5,4,2,3))
+g <- graph.data.frame(relations, directed=TRUE, vertices=actors)
+print(relations)
+
+print(g, e=TRUE, v=TRUE)
+tkid = tkplot.off()
+
+plot(g,
+       vertex.shape ="rectangle",
+       vertex.label = actors$name, 
+       edge.label=relations$friendship,
+       layout=layout.circle
+       )
+
+
+@
+
+\section{Transport Problem on Graph}
+\label{sec:Transport}
+
+
+For solution of classic transportation problem, with the use of graph theory, a bipartite graph may be considered, where production points are set in the upper part, while consumption point - in the lower part.  Points of production and consumpton,in pairs, are connected by the edges of the infinite bandwidth and the prices for the unit od the stream Cij.
+The upper part artificially is connected  with source vertex. Capacity of the edges from the source vertex to each production point is equal to the store of the commodities in this point. The price for the unit of the flow equals to 0. 
+Simillary, the lower part is connected with sink. Capacity of the each of the edge of the consumption point to te sink are equal to necessity of commodity at the point. The price for the unit of production also is equal to one. 
+Then, the problem of mincost maxflow should be solved. This solution is analogious with searching for the maxflow in the Ford-Falkerson algorithm. However, despite the use of the shotest complementary flow, the cheapest is used.  Accordingly, ??? (For solution of classic transportation problem, with the use of graph theory, a bipartite graph may be considered, where production points are set in the upper part, while consumption point - in the lower part.  Points of production and consumpton,in pairs, are connected by the edges of the infinite bandwidth and the prices for the unit od the stream Cij.
+The upper part artificially is connected  with source vertex. Capacity of the edges from the source vertex to each production point is equal to the store of the commodities in this point. The price for the unit of the flow equals to 0. 
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+
+rm(list = ls())
+price_data = c(
+
+5,4,3,4,
+3,2,5,5,
+1,6,3,2
+
+)
+
+goods_in_stores =data.frame(
+  name = c("s1","s2","s3"),
+  flow_in=c(160,140,160)
+  )
+goods_requr =data.frame(
+  name = c("r1","r2","r3","r4","r5"),
+  flow_out=c(80,80,60,80,80)
+  
+  )
+ver =data.frame(
+   name = c("S",
+            as.character( goods_in_stores$name),
+            as.character(goods_requr$name),
+          "D")
+)
+partm_to = NULL
+partm_from =NULL
+flow_m = NULL
+for(v1 in as.character(goods_in_stores$name))
+  for(v2 in as.character(goods_requr$name)) 
+    { if(v1!=v2) { 
+        partm_to = c(partm_to,v2)
+        partm_from = c(partm_from,v1)
+        flow_m = c(flow_m,sum(goods_in_stores$flow_in) )
+      }
+    }
+ partd_to = NULL
+ partd_from = NULL
+ 
+
+  for(v2 in as.character(goods_requr$name)) 
+    {  
+        partd_to =c( partd_to,"D")  
+        partd_from = c( partd_from,v2)
+      
+    }
+ parts_to = NULL
+ parts_from = NULL
+
+  for(v2 in as.character(goods_in_stores$name)) 
+    {  
+        parts_from =c(parts_from,"S")  
+        parts_to= c(parts_to,v2)
+      
+    }
+
+
+relations <- data.frame(from=c(parts_from,partm_from,partd_from),
+                        to=c(parts_to,partm_to,partd_to),
+                             
+                             
+                           
+                       capacity=c(goods_in_stores$flow_in, flow_m ,goods_requr$flow_out)
+                        #,price= price_data
+
+ )
+
+g <- graph.data.frame(relations, directed=TRUE, vertices=ver)
+
+print(g, e=TRUE, v=TRUE)
+#tkplot.off()
+
+#tkplot.close(tkid, window.close=TRUE)
+#tkid = tkplot(g,
+#     vertex.shape ="rectangle", 
+#        vertex.label = ver$name,      
+#       edge.label=relations$capacity,
+#       layout=layout.graphopt
+#       )
+plot(g,
+       vertex.shape = "crectangle", 
+       vertex.label = ver$name,      
+       edge.label   = relations$capacity,
+       layout       = layout.kamada.kawai(g)
+      
+       )
+s=graph.maxflow(g,"S","D",capacity=relations$capacity)
+cat("maxflow =",s,'\n')
+
+@
+
+
+\section{Text mining}
+\label{sec:textmining}
+
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+library("tm")
+docs1 <- data.frame(docs = c(
+"Для большинства экземпляров вид бабоч также характерна своеобразная червеобразная личинка с недоразвитыми брюшными ногами, называемая гусеницей. ",
+"ископаемые останки этого вид которых известны начиная с юрского периода, ",
+"в настоящее время вид  бабоч — один из наиболее богатых вид отряд насекомых, ",
+"представители вид которого распространены на всех континентах, за исключением Антарктиды."
+
+                            
+                            ))
+docs2 <- data.frame(docs = c(
+  
+"Теорем о бабоч является классической теорем планиметрии.",
+"теорем Опубликована в 1815 году в англ мужском журнале «Gentleman's Diary» (англ.). ",
+" авторство теорем приписывают англ математику Уильяму Джорджу Горнеру. ",
+"Сформулировать теорем можно следующим образом:"
+
+                            ))
+
+ds1 <- DataframeSource(docs1)
+ds2 <- DataframeSource(docs2)                    
+r1 = Corpus(ds1)
+r2 = Corpus(ds2)
+r = c(r1,r2)
+sw1 = c('kterou','tomu','které','tohoto','tzv')
+sw1 = c('следующим','можно','образом','tzv')
+
+sw2 = c('этого','также','которых','которого','для', 'всех')
+sw = c(sw1,sw2)
+tdm1=TermDocumentMatrix(r1,control = list(removePunctuation = TRUE,  stopwords = sw, 
+                         minWordLength = 3))
+tdm2=TermDocumentMatrix(r2,control = list(removePunctuation = TRUE,  stopwords = sw, 
+                         minWordLength = 3))                    
+tdm3=TermDocumentMatrix(r,control = list(removePunctuation = TRUE,  stopwords = sw, 
+                         minWordLength = 3))  
+dtm3=TermDocumentMatrix(r,control = list(removePunctuation = TRUE,  stopwords = sw, 
+                         minWordLength = 3))
+
+#tdm = c(tdm1,tdm2)
+t11=NULL
+i=0
+keyterms = findFreqTerms(tdm3,2,5)
+for(term in keyterms){
+  i=i+1
+t11= c(t11, data.frame(findAssocs(tdm3, keyterms[i], 0.2), row.names = NULL))
+        
+} 
+
+print(t11)
+
+@
+
+
+\end{document}

@@ -1,0 +1,233 @@
+\documentclass[a4paper,11pt]{scrartcl} 
+%\usepackage[warn]{mathtext}
+\usepackage[T2A]{fontenc}
+%\usepackage[koi8-r]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{indentfirst}%first paragraph indent
+\usepackage{cmap}
+\usepackage[unicode=true]{hyperref}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{srcltx}
+\usepackage{textcomp}
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{afterpage}
+\usepackage{ccaption}
+\captiondelim{. }
+\usepackage{xspace}
+%научные символы и смайлики \smiley \frownie
+\usepackage{wasysym}
+\usepackage[noae]{Sweave}
+\usepackage{underscore}
+%переопределение примечания для KOMA-script
+%   [отступ до метки]{отступ}{отступ абзаца}
+\deffootnote[2.5em]{1.5em}{1em}{\textsuperscript{\thefootnotemark}}
+\setkomafont{sectioning}{\bfseries}
+\setkomafont{descriptionlabel}{\bfseries}
+
+
+%backslash
+\newcommand{\bs}{\symbol{'134}}
+%degree
+\newcommand{\grad}{\ensuremath{{}^{\circ}}\xspace}
+%R-акроним
+\newcommand{\R}{{\sffamily\bfseries R}\xspace}
+
+\title{\R "--- данные и графики}
+\author{\textcopyright{} А.Б.\,Шипунов\thanks{e-mail: dactylorhiza@gmail.com},
+     Е.М.\,Балдин\thanks{e-mail: E.M.Baldin@inp.nsk.su}}
+
+\begin{document}
+\maketitle
+
+%\tableofcontents
+\section{\R и работа с данными}
+\label{sec:data}
+
+
+
+Команды перемещения по директориям и поиск файлов:
+<<echo=TRUE>>=
+getwd()
+%setwd("./workdir")
+getwd()
+dir()
+dir(pattern=glob2rx("*.txt"))
+@ 
+
+Просмотр текстовых данных:
+<<echo=TRUE,eval=FALSE>>=
+file.show("mydata.txt")
+@ 
+
+Загрузка текстовых данных:
+<<echo=TRUE>>=
+read.table("mydata.txt", sep=";", head=TRUE)
+@ 
+
+
+
+Относительная адресация:
+<<echo=TRUE>>=
+read.table("../workdir/mydata.txt", sep=";", head=TRUE)
+@ 
+
+Указание кодовой страницы:
+<<echo=TRUE>>=
+read.table(file("mydata-unicode.txt", encoding="UTF-8"),sep=";", head=TRUE)
+@ 
+
+Задание имён строк:
+<<echo=TRUE,eval=FALSE>>=
+file.show("mydata-2.txt")
+@ 
+
+<<echo=TRUE>>=
+read.table(file("mydata-2.txt", encoding="KOI8-R"), head=TRUE)
+@ 
+
+Что делать, если целая часть от дробной отделяется запятой:
+<<echo=TRUE>>=
+read.table(file("mydata-3.txt", encoding="KOI8-R"), dec=",", h=T)
+@ 
+
+Конвертация данных из сторонних форматов:
+<<echo=TRUE,eval=FALSE>>=
+library(foreign)
+help(package=foreign)
+@ 
+
+Чтение данных из буфера обмена:
+<<echo=TRUE,eval=FALSE>>=
+read.table("clipboard")
+@ 
+
+Сохранение данных в собственном формате \R:
+<<echo=TRUE>>=
+x <- "яблоко"
+<<results=hide>>=
+save(x, file="x.rd")
+rm(x)
+<<echo=TRUE>>=
+dir(pattern=glob2rx("*.rd"))
+load("x.rd")
+x
+@ 
+
+\section{Графики}
+\label{sec:graph}
+
+\setkeys{Gin}{width=0.5\textwidth}
+
+Устанавливаем шрифт для X Window (если он есть в системе, естественно):
+<<echo=TRUE>>=
+<<results=hide>>=
+X11(fonts = c("-rfx-helvetica-%s-%s-*-*-%d-*-*-*-*-*-koi8-r", "-adobe-symbol-medium-r-*-*-%d-*-*-*-*-*-*-*"))
+setwd("..")
+@ 
+% plot(1:20, main="Заголовок")
+% legend("topleft", pch=1, legend="Мои точки")
+% plot(cars)
+% title(main="Автомобили 20-х годов")
+
+<<echo=TRUE,fig=TRUE>>=
+plot(1:20, main="Title")
+legend("topleft", pch=1, legend="My points")
+@ 
+<<echo=TRUE,fig=TRUE>>=
+plot(cars)
+title(main="Automobiles (1920-1930)")
+@ 
+
+\subsection{Графические устройства}
+\label{sec:graph:device}
+
+Создание png-файла:
+<<print=TRUE,results=hide>>=
+png(file="1-20.png", bg="transparent")
+plot(1:20)
+dev.off()
+@ 
+
+Создание pdf-файла:
+<<print=TRUE,results=hide>>=
+pdf("1-20.pdf", family="NimbusSan", encoding="KOI8-R.enc")
+plot(1:20, main="Заголовок")
+dev.off()
+embedFonts("1-20.pdf")
+@ 
+
+
+\subsection{Графические опции}
+\label{sec:graph:options}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{2hist}
+  \caption{Пример eps"=файла (2hist.eps), созданного с помощью \R}
+  \label{fig:epsexample}
+\end{figure}
+
+<<print=TRUE,results=hide>>=
+# Создаётся eps-файл размером 6 на 6 дюймов
+postscript("2hist.eps",width=6.0,height=6.0,horizontal=FALSE,onefile=FALSE,paper="special")
+# Изменяется одно из значений по умолчанию
+old.par <- par(mfrow=c(2,1))
+hist(cars$speed)
+hist(cars$dist)
+# Восстанавливаем старое значение по умолчанию
+par(old.par)
+dev.off()
+embedFonts("2hist.eps")
+@ 
+
+\subsection{Разные типы диаграмм}
+\label{sec:graph:diagrams}
+
+\setkeys{Gin}{width=0.55\textwidth}
+
+Точечные диаграммы:
+<<echo=TRUE,fig=TRUE>>=
+dotchart(Titanic[,,"Adult","No"],main='People lost with the "Titanic"')
+@ 
+
+\setkeys{Gin}{width=0.8\textwidth}
+
+График"=решётка:
+<<echo=TRUE,fig=TRUE>>=
+coplot(log(Volume) ~ log(Girth) | Height, data = trees)
+@ 
+
+\subsection{Интерактивность}
+\label{sec:graph:interaction}
+
+<<echo=TRUE,eval=FALSE>>=
+plot(1:20)
+text(locator(), "Моя любимая точка", pos=4)
+@ 
+
+\section{Как сохранять результаты}
+\label{sec:saveresult}
+
+Запись данных в файл:
+<<echo=TRUE>>=
+setwd("./workdir")
+write.table(file="trees.csv", trees,row.names=F, sep=";", quote=F)
+setwd("..")
+@ 
+
+Запись результатов выполнения команды в файл:
+<<echo=TRUE>>=
+setwd("./workdir")
+sink("1.txt", split=T)
+print("2+2")
+2+2
+sink()
+setwd("..")
+@ 
+
+
+\end{document}

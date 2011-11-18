@@ -1,0 +1,61 @@
+\documentclass[a4paper,11pt]{scrartcl} 
+%\usepackage[warn]{mathtext}
+\usepackage[T2A]{fontenc}
+%\usepackage[koi8-r]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{indentfirst}%first paragraph indent
+\usepackage{cmap}
+\usepackage[unicode=true]{hyperref}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{srcltx}
+\usepackage{textcomp}
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{afterpage}
+\usepackage{ccaption}
+\captiondelim{. }
+\usepackage{xspace}
+%научные символы и смайлики \smiley \frownie
+\usepackage{wasysym}
+\usepackage[noae]{Sweave}
+\usepackage{underscore}
+%переопределение примечания для KOMA-script
+%   [отступ до метки]{отступ}{отступ абзаца}
+\deffootnote[2.5em]{1.5em}{1em}{\textsuperscript{\thefootnotemark}}
+\setkomafont{sectioning}{\bfseries}
+\setkomafont{descriptionlabel}{\bfseries}
+
+
+%backslash
+\newcommand{\bs}{\symbol{'134}}
+%degree
+\newcommand{\grad}{\ensuremath{{}^{\circ}}\xspace}
+%R-акроним
+\newcommand{\R}{{\sffamily\bfseries R}\xspace}
+
+\title{\R "--- данные и графики}
+\author{\textcopyright{} А.Б.\,Шипунов\thanks{e-mail: dactylorhiza@gmail.com},
+     Е.М.\,Балдин\thanks{e-mail: E.M.Baldin@inp.nsk.su}}
+
+\begin{document}
+\maketitle
+
+%\tableofcontents
+\section{\R и работа с данными}
+\label{sec:data}
+
+
+
+Команды перемещения по директориям и поиск файлов:
+\begin{Schunk}
+\begin{Sinput}
+> getwd()
+\end{Sinput}
+\begin{Soutput}
+[1] "/Users/apple/Dropbox/R-project"
+\end{Soutput}
+\begin{Sinput}
+> setwd("./workdir")

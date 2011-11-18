@@ -1,0 +1,82 @@
+\documentclass[a4paper,11pt]{scrartcl} 
+%\usepackage[warn]{mathtext}
+\usepackage[T2A]{fontenc}
+%\usepackage[koi8-r]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{indentfirst}%first paragraph indent
+\usepackage{cmap}
+\usepackage[unicode=true]{hyperref}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{srcltx}
+\usepackage{textcomp}
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{afterpage}
+\usepackage{ccaption}
+\captiondelim{. }
+\usepackage{xspace}
+
+\usepackage{wasysym}
+\usepackage[noae]{Sweave}
+\usepackage{underscore}
+\deffootnote[2.5em]{1.5em}{1em}{\textsuperscript{\thefootnotemark}}
+\setkomafont{sectioning}{\bfseries}
+\setkomafont{descriptionlabel}{\bfseries}
+
+
+%backslash
+\newcommand{\bs}{\symbol{'134}}
+%degree
+\newcommand{\grad}{\ensuremath{{}^{\circ}}\xspace}
+%R-акроним
+\newcommand{\R}{{\sffamily\bfseries R}\xspace}
+
+\title{Graphs  in  \R \\ and how it ?}
+\author{ Stefanovskiy D }
+
+\begin{document}
+\maketitle
+
+%\tableofcontents
+
+
+\section{Creating  graphs}
+\label{sec:smallgraph}
+
+
+<<echo=TRUE,print=TRUE,fig=TRUE>>=
+library("igraph")
+ver <- data.frame(name=c("Store1", "Store2","Shop1", "Shop2","Source","Dest"),
+                     opport_requir=c(150,50,160,40,0,0)  )
+
+
+relations <- data.frame(from=c("Source" ,"Source" ,  "Shop1",   "Shop2","Store1", "Store2", "Store1", "Store2" ),
+                        to=  c("Store1" , "Store2",  "Dest", "Dest","Shop1" , "Shop2", "Shop2", "Shop1"),
+                        capacity=c(150,50,160,40,200,200,200,200),
+                           price=c(150,50,160,40,200,200,200,200)
+ )
+g <- graph.data.frame(relations, directed=TRUE, vertices=ver)
+
+print(g, e=TRUE, v=TRUE)
+plot(g,
+       vertex.shape = "crectangle", 
+       vertex.label = ver$name,      
+       edge.label   = relations$capacity,
+       layout       = layout.graphopt
+       )
+s=graph.maxflow(g,"Source","Dest",capacity=relations$capacity)
+cat("maxflow =",s,'\n')
+relations$capacity[5] = 110
+
+s=graph.maxflow(g,"Source","Dest",capacity=relations$capacity)
+cat("maxflow =",s)
+
+
+
+
+@
+
+\end{document}
